@@ -43,8 +43,21 @@ pub fn default_oom_handler() -> ! {
 /// Write to the log.
 ///
 /// This points to stderr, but could be changed arbitrarily.
+#[cfg(not(target_os = "horizon"))]
 pub fn log(s: &str) -> usize {
     unsafe { syscall!(WRITE, 2, s.as_ptr(), s.len()) }
+}
+
+/// Write to the log.
+///
+/// This points to stderr, but could be changed arbitrarily.
+#[cfg(target_os = "horizon")]
+pub fn log(s: &str) -> usize {
+    use libtransistor_sys::*;
+    unsafe {
+        svcOutputDebugString(s.as_ptr() as *mut _, s.len() as u64);
+    }
+    s.len()
 }
 
 /// Canonicalize a fresh allocation.

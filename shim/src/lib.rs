@@ -11,8 +11,12 @@
 #![no_std]
 #![warn(missing_docs)]
 
+#[cfg(not(target_os = "horizon"))]
 #[macro_use]
 extern crate sc;
+
+#[cfg(target_os = "horizon")]
+extern crate libtransistor_sys;
 
 pub mod config;
 pub mod thread_destructor;
